@@ -111,6 +111,21 @@ solution = []
 visited_boards = []
 solved_board = []
 
+def similar_possible_moves(new_board,pos_moves):
+    new_moves = possible_moves(new_board)
+    old_moves = copy.deepcopy(pos_moves)
+    count = 0
+    for move in old_moves:
+        if move in new_moves:
+            count +=1
+
+    #We minus 1 because one of the old moves is the move used from the newboard
+    if (count-1)/len(old_moves) > 0.75:
+        return True
+    
+    #Return false if moves are not that similar
+    return False
+
 def dfs(board, move):
         """
         visited is global list of visited boards
@@ -143,6 +158,16 @@ def dfs(board, move):
             if move[0] != 0:
                 solution.append(move)
             #print("Solution so far is ", solution)
+
+            #Arrange order of moves:
+            arranged_moves = copy.deepcopy(pos_moves)
+            for next_move in pos_moves:
+                
+                #Check similar moves
+                if similar_possible_moves(new_board, board):
+                    arranged_moves.pop(0)
+                    arranged_moves.append(next_move)
+
             #For all possible moves from current board,
             # neighbour = possible boards made from current board
             for next_move in pos_moves:
